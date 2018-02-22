@@ -1,0 +1,4 @@
+*.swp
+go_venv
+env_ft
+data
