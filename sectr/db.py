@@ -1,6 +1,6 @@
 import sqlite3
 
-class transaction_db:
+class db:
 
     def __init__(self):
         self.db_file = '../data/transactions.db'
