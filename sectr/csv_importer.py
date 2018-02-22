@@ -23,13 +23,13 @@ sql = ''' INSERT INTO transactions(date,amount,description,lender,main_category,
 convert row csv from Citi and convert to SECTR format
 """
 def make_citi_db_tuple(row):
-    description = ' '.join([row['Description'],row['Member Name']]),
-    amount = float(row['Debit']) if row['Debit'] else float(row['Credit']),
-    tpl = (row['Date']                  # date
-            description,                # amount
-            amount,                     # description
+    description = ' '.join([row['Description'],row['Member Name']])
+    amount = float(row['Debit']) if row['Debit'] else float(row['Credit'])
+    tpl = (row['Date'],                 # date
+            amount,                     # amount
+            description,                # description
             'Citi',                     # lender
-            auto_classifiy(description),# main category
+            auto_classify(description), # main category
             '',                         # sub category
             '',                         # extra source info
             '')                         # notes
@@ -39,10 +39,10 @@ def make_citi_db_tuple(row):
 convert row csv from Discover and convert to SECTR format
 """
 def make_discover_db_tuple(row):
-    desciption = row['Description']
-    extra_info = ''.join([row['Category'], row['Trans. Date'])
+    description = row['Description']
+    extra_info = ' '.join([row['Category'], row['Trans. Date']])
     tpl = (row['Post Date'],            # date
-            -float(row['Amount']),      # amount
+            float(row['Amount']),       # amount
             description,                # description
             'Discover',                 # lender
             auto_classify(description), # main category
@@ -55,7 +55,7 @@ def make_discover_db_tuple(row):
 convert row csv from BofA and convert to SECTR format
 """
 def make_bofa_db_tuple(row):
-    desciption = ' '.join([row['Payee'],row['Address']]),
+    description = ' '.join([row['Payee'],row['Address']])
     tpl = (row['Posted Date'],          # date
             -float(row['Amount']),      # amount
             description,                # description
