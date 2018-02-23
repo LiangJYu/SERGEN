@@ -20,7 +20,7 @@ class db:
                         lender text NOT NULL,
                         main_category text NOT NULL,
                         sub_category text NOT NULL,
-                        exta_src_info text NOT NULL,
+                        extra_src_info text NOT NULL,
                         notes text NOT NULL); """
         try:
             c = self.conn.cursor()
@@ -28,3 +28,10 @@ class db:
         except Error as e:
             print(e)
 
+def main():
+    trans_db = db()
+    trans_db.create_connection()
+    trans_db.create_table()
+
+if __name__ == '__main__':
+    main()
