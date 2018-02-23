@@ -14,7 +14,7 @@ class db:
     
     def create_table(self):
         sql = """ CREATE TABLE IF NOT EXISTS transactions(
-                        date text PRIMARY KEY,
+                        date text,
                         amount float,
                         description text NOT NULL,
                         lender text NOT NULL,
