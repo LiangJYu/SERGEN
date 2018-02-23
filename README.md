@@ -6,15 +6,15 @@ Track expenses in user defined categories
 
 Generate monthly reports of spending and accumulation in defined categories
 
-TODO:
+DONE:
 
-*   aggregate all data into SQLite
+    aggregate all data into SQLite
 
-    multi-CSV converter - use SQL for easy filtering
+    multi-CSV converter - convert from multiple institution formats?
 
-*       convert from multiple institution formats?
+TODO/RANDOM IDEAS:
 
-        format validation
+    multi-CSV converter - format validation
 
     rules for auto classification
 
