@@ -73,7 +73,7 @@ def import_statement(lender, conn, path):
     with open(path, 'r') as fin:
         # DictReader uses first line in file for column headings by default
         statement_data = csv.DictReader(fin) 
-        to_db = [tpl_maker[lender] for row in statement_data]
+        to_db = [tpl_maker[lender](row) for row in statement_data]
 
     cur = conn.cursor()
     cur.executemany(sql, to_db)
