@@ -69,14 +69,25 @@ def make_bofa_db_tuple(row):
 # dictionary of lender names and conversion function
 tpl_maker = {'bofa':make_bofa_db_tuple, 'discover':make_discover_db_tuple, 'citi':make_citi_db_tuple}
 
+# dictionary of CSV header. TODO: move this else where (maybe in a db)
+csv_headers = {}
+csv_headers['bofa'] = ['Posted Date', 'Reference Number', 'Payee', 'Address', 'Amount']
+csv_headers['citi'] = ['Status', 'Date', 'Description', 'Debit', 'Credit', 'Member Name', '', 'Main Categories', 'Other Catergories']
+csv_headers['discover']=['Trans. Date', 'Post Date', 'Description', 'Amount', 'Category']
+
 def import_statement(lender, conn, path):
     with open(path, 'r') as fin:
         # DictReader uses first line in file for column headings by default
         statement_data = csv.DictReader(fin) 
-        to_db = [tpl_maker[lender](row) for row in statement_data]
+        
+        # continue if CSV headers match
+        if csv_headers[lender] == reader.fieldnames:
+            # read in all data
+            to_db = [tpl_maker[lender](row) for row in statement_data]
 
-    cur = conn.cursor()
-    cur.executemany(sql, to_db)
-    conn.commit()
-    conn.close()
+            # insert all data into database
+            cur = conn.cursor()
+            cur.executemany(sql, to_db)
+            conn.commit()
+            conn.close()
 

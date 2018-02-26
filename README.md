@@ -12,9 +12,13 @@ DONE:
 
     multi-CSV converter - convert from multiple institution formats?
 
+    multi-CSV converter - format validation based on CSV header
+
 TODO/RANDOM IDEAS:
 
-    multi-CSV converter - format validation
+    duplicate entry check
+
+    multi-CSV converter - format validation based on CSV headers stored in database
 
     rules for auto classification
 
