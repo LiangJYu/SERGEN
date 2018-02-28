@@ -83,11 +83,20 @@ def import_statement(lender, conn, path):
         # continue if CSV headers match
         if csv_headers[lender] == reader.fieldnames:
             # read in all data
-            to_db = [tpl_maker[lender](row) for row in statement_data]
+            to_db = []
+            for row in statement_data:
+                temp_tpl = tpl_maker[lender](row)
+                if temp_tpl in to_db:
+                    temp_tpl = list(temp_tpl)
+                    temp_tpl[4] = 'duplicate'
+                    temp_tpl = tuple(temp_tpl)
+                to_db.append(temp_tpl)
 
             # insert all data into database
             cur = conn.cursor()
             cur.executemany(sql, to_db)
             conn.commit()
             conn.close()
+        else:
+            print("headers do not match")
 
