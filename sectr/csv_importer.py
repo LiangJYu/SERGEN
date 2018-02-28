@@ -81,15 +81,21 @@ def import_statement(lender, conn, path):
         statement_data = csv.DictReader(fin) 
         
         # continue if CSV headers match
-        if csv_headers[lender] == reader.fieldnames:
+        if csv_headers[lender] == statement_data.fieldnames:
             # read in all data
+            # check for duplicates and mark them as needed
+            # is dup if date, amount, and description are repeated
             to_db = []
+            unique_list = []
             for row in statement_data:
                 temp_tpl = tpl_maker[lender](row)
-                if temp_tpl in to_db:
+                dup_check = temp_tpl[:3]
+                if dup_check in unique_list:
                     temp_tpl = list(temp_tpl)
-                    temp_tpl[4] = 'duplicate'
+                    temp_tpl[5] = 'duplicate'
                     temp_tpl = tuple(temp_tpl)
+                else:
+                    unique_list.append(dup_check)
                 to_db.append(temp_tpl)
 
             # insert all data into database
