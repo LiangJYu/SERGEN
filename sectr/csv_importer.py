@@ -24,13 +24,14 @@ convert row csv from Citi and convert to SECTR format
 """
 def make_citi_db_tuple(row):
     description = ' '.join([row['Description'],row['Member Name']])
+    cat_main, cat_sub = auto_classify(description)
     amount = float(row['Debit']) if row['Debit'] else float(row['Credit'])
     tpl = (row['Date'],                 # date
             amount,                     # amount
             description,                # description
             'Citi',                     # lender
-            auto_classify(description), # main category
-            '',                         # sub category
+            cat_main,                   # main category
+            cat_sub,                    # sub category
             '',                         # extra source info
             '')                         # notes
     return tpl
@@ -40,13 +41,14 @@ convert row csv from Discover and convert to SECTR format
 """
 def make_discover_db_tuple(row):
     description = row['Description']
+    cat_main, cat_sub = auto_classify(description)
     extra_info = ' '.join([row['Category'], row['Trans. Date']])
     tpl = (row['Post Date'],            # date
             float(row['Amount']),       # amount
             description,                # description
             'Discover',                 # lender
-            auto_classify(description), # main category
-            '',                         # sub category
+            cat_main,                   # main category
+            cat_sub,                    # sub category
             extra_info,                 # extra source info
             '')                         # notes
     return tpl
@@ -56,12 +58,14 @@ convert row csv from BofA and convert to SECTR format
 """
 def make_bofa_db_tuple(row):
     description = ' '.join([row['Payee'],row['Address']])
+    cat_main, cat_sub = auto_classify(description)
+    #print(cat_main, cat_sub)
     tpl = (row['Posted Date'],          # date
             -float(row['Amount']),      # amount
             description,                # description
             'Bank of America',          # lender
-            auto_classify(description), # main category
-            '',                         # sub category
+            cat_main,                   # main category
+            cat_sub,                    # sub category
             row['Reference Number'],    # extra source info
             '')                         # notes
     return tpl

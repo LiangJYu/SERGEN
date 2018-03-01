@@ -15,20 +15,23 @@ DONE:
     multi-CSV converter - format validation based on CSV header
 
     duplicate entry check - possible duplicate if there exists date, amount, description, lender match
-        do this outside database and in CSV parsing
+        done outside database and in CSV parsing
+
+    rules for auto classification
+
+    visual interface http://sqlitebrowser.org/ - install and run exe
 
 TODO/RANDOM IDEAS:
 
-    multi-CSV converter - format validation based on CSV headers stored in database
+    duplicate entry check - possible duplicate if there exists date, amount, description, lender match
+        done inside database after commit entries
 
-    rules for auto classification
+    multi-CSV converter - format validation based on CSV headers stored in database
 
     parsing for multiple categories
 
     report generation - ipynb and SQLite->Pandas?
     
-    visual interface http://sqlitebrowser.org/
-
     implement online backup upon ?
     export to Dropbox?  https://anands.github.io/blog/2016/11/20/continuous-backup-of-dot-files-using-python-and-dropbox/
 
