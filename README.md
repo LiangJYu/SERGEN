@@ -24,21 +24,29 @@ DONE:
 
 TODO/RANDOM IDEAS:
 
++ change Sqlite data format
+
++ save and load to/from YAML
+
+  + categories
+
+  + path to data
+
++ report generation - ipynb and SQLite->Pandas?
+
++ parsing for multiple categories
+
 + duplicate entry check - possible duplicate if there exists date, amount, description, lender match
 
   + done inside database after commit entries
 
 + multi-CSV converter - format validation based on CSV headers stored in database
-
-+ parsing for multiple categories
-
-+ report generation - ipynb and SQLite->Pandas?
     
 + implement online backup upon ?
 
   + export to Dropbox?  https://anands.github.io/blog/2016/11/20/continuous-backup-of-dot-files-using-python-and-dropbox/
 
-+ run on pi zero
++ run on pi
 
   + database storage
 
