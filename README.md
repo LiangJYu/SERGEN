@@ -24,7 +24,7 @@ DONE:
 
 TODO/RANDOM IDEAS:
 
-+ change Sqlite data format
++ change SQlite data format https://stackoverflow.com/questions/4428795/sqlite-convert-string-to-date
 
 + save and load to/from YAML
 
