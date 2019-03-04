@@ -1,6 +1,8 @@
 import csv
 import sqlite3
-from auto_classify import auto_classify
+import sys
+import os
+# from auto_classify import auto_classify
 
 """
 SECTR fields
@@ -16,22 +18,22 @@ notes
 read in csv from different financial institutions and convert them to SECTR format
 """
 
-sql = ''' INSERT INTO transactions(date,amount,description,lender,main_category,sub_category,extra_src_info,notes)
-          VALUES(?,?,?,?,?,?,?,?) '''
+sql = ''' INSERT INTO transactions(date,amount,description,lender,category,extra_src_info,notes)
+          VALUES(?,?,?,?,?,?,?) '''
               
 """
 convert row csv from Citi and convert to SECTR format
 """
 def make_citi_db_tuple(row):
     description = ' '.join([row['Description'],row['Member Name']])
-    cat_main, cat_sub = auto_classify(description)
+    # cat_main, cat_sub = auto_classify(description)
+    cat_main = ''
     amount = float(row['Debit']) if row['Debit'] else float(row['Credit'])
     tpl = (row['Date'],                 # date
             amount,                     # amount
             description,                # description
             'Citi',                     # lender
             cat_main,                   # main category
-            cat_sub,                    # sub category
             '',                         # extra source info
             '')                         # notes
     return tpl
@@ -41,14 +43,14 @@ convert row csv from Discover and convert to SECTR format
 """
 def make_discover_db_tuple(row):
     description = row['Description']
-    cat_main, cat_sub = auto_classify(description)
+    # cat_main, cat_sub = auto_classify(description)
+    cat_main = ''
     extra_info = ' '.join([row['Category'], row['Trans. Date']])
     tpl = (row['Post Date'],            # date
             float(row['Amount']),       # amount
             description,                # description
             'Discover',                 # lender
             cat_main,                   # main category
-            cat_sub,                    # sub category
             extra_info,                 # extra source info
             '')                         # notes
     return tpl
@@ -58,14 +60,14 @@ convert row csv from BofA and convert to SECTR format
 """
 def make_bofa_db_tuple(row):
     description = ' '.join([row['Payee'],row['Address']])
-    cat_main, cat_sub = auto_classify(description)
+    # cat_main, cat_sub = auto_classify(description)
+    cat_main = ''
     #print(cat_main, cat_sub)
     tpl = (row['Posted Date'],          # date
             -float(row['Amount']),      # amount
             description,                # description
             'Bank of America',          # lender
             cat_main,                   # main category
-            cat_sub,                    # sub category
             row['Reference Number'],    # extra source info
             '')                         # notes
     return tpl
@@ -76,7 +78,7 @@ tpl_maker = {'bofa':make_bofa_db_tuple, 'discover':make_discover_db_tuple, 'citi
 # dictionary of CSV header. TODO: move this else where (maybe in a db)
 csv_headers = {}
 csv_headers['bofa'] = ['Posted Date', 'Reference Number', 'Payee', 'Address', 'Amount']
-csv_headers['citi'] = ['Status', 'Date', 'Description', 'Debit', 'Credit', 'Member Name', '', 'Main Categories', 'Other Catergories']
+csv_headers['citi'] = ['Status', 'Date', 'Description', 'Debit', 'Credit', 'Member Name']
 csv_headers['discover']=['Trans. Date', 'Post Date', 'Description', 'Amount', 'Category']
 
 def import_statement(lender, conn, path):
@@ -110,3 +112,10 @@ def import_statement(lender, conn, path):
         else:
             print("headers do not match")
 
+
+if __name__ == '__main__':
+    db_file = '../data/transactions.db'
+    conn = sqlite3.connect(db_file)
+    lender = sys.argv[1]
+    path = sys.argv[2]
+    import_statement(lender, conn, os.path.expanduser(path))
