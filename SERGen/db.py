@@ -18,8 +18,7 @@ class db:
                         amount float,
                         description text NOT NULL,
                         lender text NOT NULL,
-                        main_category text NOT NULL,
-                        sub_category text NOT NULL,
+                        category text NOT NULL,
                         extra_src_info text NOT NULL,
                         notes text NOT NULL); """
         try:
