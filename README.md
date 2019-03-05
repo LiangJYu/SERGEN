@@ -1,4 +1,4 @@
-SERGen - SimpleExpenditureReportGenerator
+SERGen - _S_imple_E_xpenditure_R_eport_Gen_erator
 
 Objectives:
 
