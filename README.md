@@ -1,4 +1,4 @@
-SERGen - _S_imple_E_xpenditure_R_eport_Gen_erator
+SERGen - **S**imple**E**xpenditure**R**eport**Gen**erator
 
 Objectives:
 
