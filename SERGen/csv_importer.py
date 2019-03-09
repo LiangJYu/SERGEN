@@ -24,6 +24,23 @@ sql = ''' INSERT INTO transactions(date,amount,description,lender,category,extra
 """
 convert row csv from Citi and convert to SECTR format
 """
+def make_amzn_db_tuple(row):
+    description = ' '.join([row['Description'],row['Type']])
+    # cat_main, cat_sub = auto_classify(description)
+    cat_main = ''
+    tpl = (row['Transaction Date'],     # date
+            row['Amount'],              # amount
+            description,                # description
+            'Amzn',                     # lender
+            cat_main,                   # main category
+            '',                         # extra source info
+            '')                         # notes
+    return tpl
+
+              
+"""
+convert row csv from Citi and convert to SECTR format
+"""
 def make_citi_db_tuple(row):
     description = ' '.join([row['Description'],row['Member Name']])
     # cat_main, cat_sub = auto_classify(description)
@@ -80,6 +97,8 @@ csv_headers = {}
 csv_headers['bofa'] = ['Posted Date', 'Reference Number', 'Payee', 'Address', 'Amount']
 csv_headers['citi'] = ['Status', 'Date', 'Description', 'Debit', 'Credit', 'Member Name']
 csv_headers['discover']=['Trans. Date', 'Post Date', 'Description', 'Amount', 'Category']
+csv_headers['amzn']=['Transaction Date', 'Post Date', 'Description', 'Category', 'Type', 'Amount']
+
 
 def import_statement(lender, conn, path):
     with open(path, 'r') as fin:
