@@ -32,7 +32,7 @@ convert row csv from Citi and convert to SECTR format
 def make_amzn_db_tuple(row):
     description = ' '.join([row['Description'],row['Type']])
     # cat_main, cat_sub = auto_classify(description)
-    cat_main = ''
+    cat_main = 'uncategorized'
     tpl = (row['Transaction Date'],     # date
             -float(row['Amount']),      # amount (Chase Amazon <0 debit and >0 payment)
             description,                # description
@@ -49,7 +49,7 @@ convert row csv from Citi and convert to SECTR format
 def make_citi_db_tuple(row):
     description = ' '.join([row['Description'],row['Member Name']])
     # cat_main, cat_sub = auto_classify(description)
-    cat_main = ''
+    cat_main = 'uncategorized'
     amount = float(row['Debit']) if row['Debit'] else float(row['Credit'])
     tpl = (row['Date'],                 # date
             amount,                     # amount
@@ -66,7 +66,7 @@ convert row csv from Discover and convert to SECTR format
 def make_discover_db_tuple(row):
     description = row['Description']
     # cat_main, cat_sub = auto_classify(description)
-    cat_main = ''
+    cat_main = 'uncategorized'
     extra_info = ' '.join([row['Category'], row['Trans. Date']])
     tpl = (row['Post Date'],            # date
             float(row['Amount']),       # amount
@@ -83,7 +83,7 @@ convert row csv from BofA and convert to SECTR format
 def make_bofa_db_tuple(row):
     description = ' '.join([row['Payee'],row['Address']])
     # cat_main, cat_sub = auto_classify(description)
-    cat_main = ''
+    cat_main = 'uncategorized'
     #print(cat_main, cat_sub)
     tpl = (row['Posted Date'],          # date
             -float(row['Amount']),      # amount (BofA <0 debit and >0 payment)
