@@ -2,6 +2,7 @@ import csv
 import sqlite3
 import sys
 import os
+import argparse
 # from auto_classify import auto_classify
 
 """
@@ -16,6 +17,10 @@ extra_src_info - info of unused fields from source concatnated
 notes
 
 read in csv from different financial institutions and convert them to SECTR format
+
+amount convention:
+    > 0 payment for something i.e. borrowing from lender
+    < 0 payment to lender
 """
 
 sql = ''' INSERT INTO transactions(date,amount,description,lender,category,extra_src_info,notes)
@@ -29,7 +34,7 @@ def make_amzn_db_tuple(row):
     # cat_main, cat_sub = auto_classify(description)
     cat_main = ''
     tpl = (row['Transaction Date'],     # date
-            row['Amount'],              # amount
+            -float(row['Amount']),      # amount (Chase Amazon <0 debit and >0 payment)
             description,                # description
             'Amzn',                     # lender
             cat_main,                   # main category
@@ -81,7 +86,7 @@ def make_bofa_db_tuple(row):
     cat_main = ''
     #print(cat_main, cat_sub)
     tpl = (row['Posted Date'],          # date
-            -float(row['Amount']),      # amount
+            -float(row['Amount']),      # amount (BofA <0 debit and >0 payment)
             description,                # description
             'Bank of America',          # lender
             cat_main,                   # main category
@@ -90,7 +95,10 @@ def make_bofa_db_tuple(row):
     return tpl
 
 # dictionary of lender names and conversion function
-tpl_maker = {'bofa':make_bofa_db_tuple, 'discover':make_discover_db_tuple, 'citi':make_citi_db_tuple}
+tpl_maker = {'bofa':make_bofa_db_tuple, 
+        'discover':make_discover_db_tuple, 
+        'citi':make_citi_db_tuple,
+        'amzn':make_amzn_db_tuple}
 
 # dictionary of CSV header. TODO: move this else where (maybe in a db)
 csv_headers = {}
@@ -100,7 +108,7 @@ csv_headers['discover']=['Trans. Date', 'Post Date', 'Description', 'Amount', 'C
 csv_headers['amzn']=['Transaction Date', 'Post Date', 'Description', 'Category', 'Type', 'Amount']
 
 
-def import_statement(lender, conn, path):
+def import_statement(lender, conn, path, testing):
     with open(path, 'r') as fin:
         # DictReader uses first line in file for column headings by default
         statement_data = csv.DictReader(fin) 
@@ -124,17 +132,27 @@ def import_statement(lender, conn, path):
                 to_db.append(temp_tpl)
 
             # insert all data into database
-            cur = conn.cursor()
-            cur.executemany(sql, to_db)
-            conn.commit()
-            conn.close()
+            if not testing:
+                cur = conn.cursor()
+                cur.executemany(sql, to_db)
+                conn.commit()
+                conn.close()
         else:
             print("headers do not match")
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('-l', '--lender',
+            help = 'lender generated csv statement')
+    parser.add_argument('-p', '--path',
+            help = 'path to lender generated csv file')
+    parser.add_argument('-t', '--test', action='store_true',
+            help = 'parse file without updating database')
+    args = parser.parse_args()
+
     db_file = '../data/transactions.db'
     conn = sqlite3.connect(db_file)
-    lender = sys.argv[1]
-    path = sys.argv[2]
-    import_statement(lender, conn, os.path.expanduser(path))
+    lender = args.lender
+    path = os.path.expanduser(args.path)
+    import_statement(lender, conn, os.path.expanduser(path), args.test)
